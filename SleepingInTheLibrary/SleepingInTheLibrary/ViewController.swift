@@ -71,6 +71,16 @@ class ViewController: UIViewController {
                         
                         if let imageUrlString = randomPhoto[Constants.FlickrResponseKeys.MediumURL] as? String,
                             let title = randomPhoto[Constants.FlickrResponseKeys.Title] as? String {
+                            
+                            let imageUrl = URL(string: imageUrlString)
+                            if let imageData = try? Data(contentsOf: imageUrl!) {
+                                performUIUpdatesOnMain {
+                                    self.photoImageView.image = UIImage(data: imageData)
+                                    self.photoTitleLabel.text = title
+                                    self.setUIEnabled(true)
+                                }
+                            }
+                            
                             print("title: \(title), image url: \(imageUrlString)")
                         }
                     }
