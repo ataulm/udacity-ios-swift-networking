@@ -54,38 +54,70 @@ class ViewController: UIViewController {
         
         let urlRequest = URLRequest(url: url)
         let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            if (error == nil) {
-                if let data = data {
-                    let parsedData : [String:AnyObject]!
-                    do {
-                        parsedData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
-                    } catch {
-                        print("ruhroh, error")
-                        return
-                    }
-                    
-                    if let photosDictionaries = parsedData[Constants.FlickrResponseKeys.Photos] as? [String:AnyObject],
-                        let photoDictionariesArray = photosDictionaries[Constants.FlickrResponseKeys.Photo] as? [[String:AnyObject]] {
-                        let randomPhotoIndex = Int(arc4random_uniform(UInt32(photoDictionariesArray.count)))
-                        let randomPhoto = photoDictionariesArray[randomPhotoIndex] as [String:AnyObject]
-                        
-                        if let imageUrlString = randomPhoto[Constants.FlickrResponseKeys.MediumURL] as? String,
-                            let title = randomPhoto[Constants.FlickrResponseKeys.Title] as? String {
-                            
-                            let imageUrl = URL(string: imageUrlString)
-                            if let imageData = try? Data(contentsOf: imageUrl!) {
-                                performUIUpdatesOnMain {
-                                    self.photoImageView.image = UIImage(data: imageData)
-                                    self.photoTitleLabel.text = title
-                                    self.setUIEnabled(true)
-                                }
-                            }
-                            
-                            print("title: \(title), image url: \(imageUrlString)")
-                        }
-                    }
+            
+            func displayError(_ error: String) {
+                print(error)
+                print("URL at time of error: \(url)")
+                performUIUpdatesOnMain {
+                    self.setUIEnabled(true)
                 }
             }
+            
+            guard (error == nil) else {
+                displayError("There was an error with your request: \(error!)")
+                return
+            }
+            
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode < 300 else {
+                displayError("Your request returned a status code other than 2xx!")
+                return
+            }
+            
+            guard let data = data else {
+                displayError("No data was returned :(")
+                return
+            }
+            
+            let parsedData: [String:AnyObject]!
+            do {
+                parsedData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
+            } catch {
+                displayError("Couldn't parse the data as JSON: '\(data)'")
+                return
+            }
+            
+            guard let flickrStatus = parsedData[Constants.FlickrResponseKeys.Status] as? String, flickrStatus == Constants.FlickrResponseValues.OKStatus else {
+                displayError("Flickr API returned error. See error code and message in \(parsedData)")
+                return
+            }
+            
+            guard let photosDictionary = parsedData[Constants.FlickrResponseKeys.Photos] as? [String:AnyObject], let photoArray = photosDictionary[Constants.FlickrResponseKeys.Photo] as? [[String:AnyObject]] else {
+                displayError("Couldn't find keys \(Constants.FlickrResponseKeys.Photos) and \(Constants.FlickrResponseKeys.Photo) in \(parsedData)")
+                return
+            }
+            
+            
+            let randomPhotoIndex = Int(arc4random_uniform(UInt32(photoArray.count)))
+            let randomPhoto = photoArray[randomPhotoIndex] as [String:AnyObject]
+            let randomPhotoTitle = randomPhoto[Constants.FlickrResponseKeys.Title] as? String
+            
+            guard let imageUrlString = randomPhoto[Constants.FlickrResponseKeys.MediumURL] as? String else {
+                displayError("Couldn't find keys \(Constants.FlickrResponseKeys.MediumURL)")
+                return
+            }
+            
+            let imageUrl = URL(string: imageUrlString)
+            if let imageData = try? Data(contentsOf: imageUrl!) {
+                performUIUpdatesOnMain {
+                    self.photoImageView.image = UIImage(data: imageData)
+                    self.photoTitleLabel.text = randomPhotoTitle ?? "(Untitled)"
+                    self.setUIEnabled(true)
+                }
+            } else {
+                displayError("Image does not exist at \(String(describing: imageUrl))")
+            }
+                    
+            print("title: \(String(describing: randomPhotoTitle)), image url: \(imageUrlString)")
         }
         task.resume()
     }
