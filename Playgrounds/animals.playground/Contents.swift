@@ -22,6 +22,28 @@ var parsedAnimalsJSON = try! JSONSerialization.jsonObject(with: rawAnimalsJSON!,
 
 func parseJSONAsDictionary(_ dictionary: NSDictionary) {
     /* Start playing with JSON here... */
+    guard let photos = dictionary["photos"] as? NSDictionary else {
+        print("couldn't find \"photos\" inside \(dictionary)")
+        return
+    }
+    
+    guard let total = photos["total"] as? Int else {
+        print("unknown number of photos")
+        return
+    }
+    
+    print("number of photos: \(total)")
+}
+
+private func extractTotalOrCrash(_ dictionary: NSDictionary) -> Int throws -> ParsingError {
+    guard let total = dictionary["total"] as? Int else {
+        throw Error()
+    }
+    return total
+}
+
+class ParsingError : Error {
+    
 }
 
 parseJSONAsDictionary(parsedAnimalsJSON)
