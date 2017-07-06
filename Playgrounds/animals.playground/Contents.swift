@@ -33,13 +33,23 @@ func parseJSONAsDictionary(_ dictionary: NSDictionary) {
     }
     
     print("number of photos: \(total)")
-}
+    let photosArray = photos["photo"] as! [[String:AnyObject]]
 
-private func extractTotalOrCrash(_ dictionary: NSDictionary) -> Int throws -> ParsingError {
-    guard let total = dictionary["total"] as? Int else {
-        throw Error()
+    for i in 0..<photosArray.count {
+//        print(photosArray[i])
+        let photo = photosArray[i]
+        let photoComment = photo["comment"] as! [String:AnyObject]
+        guard let content = photoComment["_content"] else {
+            print("no content")
+            break
+        }
+        if (content.contains("interrufftion")) {
+            print("interruftion photo: \(i)")
+        }
     }
-    return total
+    
+    
+//    print(photosArray)
 }
 
 class ParsingError : Error {
