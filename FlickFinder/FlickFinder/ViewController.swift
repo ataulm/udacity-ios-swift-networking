@@ -53,8 +53,15 @@ class ViewController: UIViewController {
         
         if !phraseTextField.text!.isEmpty {
             photoTitleLabel.text = "Searching..."
-            // TODO: Set necessary parameters!
-            let methodParameters: [String: AnyObject] = [:]
+            
+            let methodParameters: [String: String?] = [
+                Constants.FlickrParameterKeys.APIKey: Constants.FlickrParameterValues.APIKey,
+                Constants.FlickrParameterKeys.Text: phraseTextField.text,
+                Constants.FlickrParameterKeys.SafeSearch: Constants.FlickrParameterValues.UseSafeSearch,
+                Constants.FlickrParameterKeys.Extras: Constants.FlickrParameterValues.MediumURL,
+                Constants.FlickrParameterKeys.Format: Constants.FlickrParameterValues.ResponseFormat,
+                Constants.FlickrParameterKeys.NoJSONCallback: Constants.FlickrParameterValues.DisableJSONCallback
+            ]
             displayImageFromFlickrBySearch(methodParameters)
         } else {
             setUIEnabled(true)
@@ -70,7 +77,7 @@ class ViewController: UIViewController {
         if isTextFieldValid(latitudeTextField, forRange: Constants.Flickr.SearchLatRange) && isTextFieldValid(longitudeTextField, forRange: Constants.Flickr.SearchLonRange) {
             photoTitleLabel.text = "Searching..."
             // TODO: Set necessary parameters!
-            let methodParameters: [String: AnyObject] = [:]
+            let methodParameters: [String: String?] = [:]
             displayImageFromFlickrBySearch(methodParameters)
         }
         else {
@@ -81,7 +88,7 @@ class ViewController: UIViewController {
     
     // MARK: Flickr API
     
-    private func displayImageFromFlickrBySearch(_ methodParameters: [String: AnyObject]) {
+    private func displayImageFromFlickrBySearch(_ methodParameters: [String: String?]) {
         
         print(flickrURLFromParameters(methodParameters))
         
@@ -90,7 +97,7 @@ class ViewController: UIViewController {
     
     // MARK: Helper for Creating a URL from Parameters
     
-    private func flickrURLFromParameters(_ parameters: [String: AnyObject]) -> URL {
+    private func flickrURLFromParameters(_ parameters: [String: String?]) -> URL {
         
         var components = URLComponents()
         components.scheme = Constants.Flickr.APIScheme
@@ -99,7 +106,7 @@ class ViewController: UIViewController {
         components.queryItems = [URLQueryItem]()
         
         for (key, value) in parameters {
-            let queryItem = URLQueryItem(name: key, value: "\(value)")
+            let queryItem = URLQueryItem(name: key, value: "\(value!)")
             components.queryItems!.append(queryItem)
         }
         

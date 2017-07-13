@@ -14,6 +14,7 @@
 		A9A3A21A1BEBB46B009BE8E1 /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3A2191BEBB46B009BE8E1 /* GCDBlackBox.swift */; };
 		A9A3A2241BEBD15B009BE8E1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3A2231BEBD15B009BE8E1 /* Constants.swift */; };
 		A9FA133B1D1AB5F300B5F46E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A9FA13391D1AB5F300B5F46E /* LaunchScreen.xib */; };
+		C06CA40C1F177C4A008F8692 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06CA40B1F177C4A008F8692 /* Secrets.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		A9A3A2191BEBB46B009BE8E1 /* GCDBlackBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDBlackBox.swift; sourceTree = "<group>"; };
 		A9A3A2231BEBD15B009BE8E1 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		A9FA133A1D1AB5F300B5F46E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		C06CA40B1F177C4A008F8692 /* Secrets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 		A9A3A2061BEBB443009BE8E1 /* FlickFinder */ = {
 			isa = PBXGroup;
 			children = (
+				C06CA40B1F177C4A008F8692 /* Secrets.swift */,
 				A9A3A2071BEBB443009BE8E1 /* AppDelegate.swift */,
 				A9A3A2091BEBB443009BE8E1 /* ViewController.swift */,
 				A9A3A2231BEBD15B009BE8E1 /* Constants.swift */,
@@ -159,6 +162,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9A3A20A1BEBB443009BE8E1 /* ViewController.swift in Sources */,
+				C06CA40C1F177C4A008F8692 /* Secrets.swift in Sources */,
 				A9A3A21A1BEBB46B009BE8E1 /* GCDBlackBox.swift in Sources */,
 				A9A3A2081BEBB443009BE8E1 /* AppDelegate.swift in Sources */,
 				A9A3A2241BEBD15B009BE8E1 /* Constants.swift in Sources */,
