@@ -91,8 +91,33 @@ class ViewController: UIViewController {
                 return
             }
 
-            print(parsedData)
+            let photos = self.extractPhotosFrom(data: parsedData);
+            self.show(photos: photos)
         }.resume()
+    }
+
+    struct Photo {
+
+        let title: String
+        let imageUrl: String
+
+    }
+
+    private func extractPhotosFrom(data: [String: AnyObject]) -> [Photo] {
+        let photosDictionaryOptional = data[Constants.FlickrResponseKeys.Photos] as? [String: AnyObject]
+        guard let photosDictionary = photosDictionaryOptional, let photoArray = photosDictionary[Constants.FlickrResponseKeys.Photo] as? [[String: AnyObject]] else {
+            return []
+        }
+        var photos = [Photo]()
+        for photoDict in photoArray {
+            let titleOptional = photoDict[Constants.FlickrResponseKeys.Title] as? String
+            let imageUrlOptional = photoDict[Constants.FlickrResponseKeys.MediumURL] as? String
+            if let title = titleOptional, let imageUrl = imageUrlOptional {
+                let photo = Photo(title: title, imageUrl: imageUrl)
+                photos.append(photo)
+            }
+        }
+        return photos
     }
 
     private func parse(data: Data) -> [String: AnyObject]? {
@@ -104,8 +129,18 @@ class ViewController: UIViewController {
         }
     }
 
-    private func showData() {
-
+    private func show(photos: [Photo]) {
+        let randomPhotoIndex = Int(arc4random_uniform(UInt32(photos.count)))
+        let randomPhoto = photos[randomPhotoIndex]
+        if let imageData = try? Data(contentsOf: URL(string: randomPhoto.imageUrl)!) {
+            performUIUpdatesOnMain {
+                self.photoTitleLabel.text = randomPhoto.title
+                self.photoImageView.image = UIImage(data: imageData)
+                self.setUIEnabled(true)
+            }
+        } else {
+            show(error: "unable to display image")
+        }
     }
 
     func show(error: String) {
@@ -129,7 +164,6 @@ class ViewController: UIViewController {
             components.queryItems!.append(queryItem)
         }
 
-        print(components.url!)
         return components.url!
     }
 
